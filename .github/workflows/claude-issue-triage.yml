@@ -65,7 +65,10 @@ jobs:
             4. Aplica los labels elegidos:
                `gh issue edit ${{ github.event.issue.number }} --add-label "label1,label2"`
 
-            5. Publica (o actualiza) un comentario de diagnóstico. Primero
+            5. Publica (o actualiza) un comentario de diagnóstico, escrito en
+               formato Markdown que GitHub pueda renderizar correctamente
+               (encabezados con `##`, listas con `-`, rutas y nombres de
+               función entre backticks, etc.). Primero
                busca si ya existe un comentario tuyo anterior de triage:
                `gh api repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments --jq '.[] | select(.body | startswith("<!-- claude-triage -->")) | .id'`
                - Si existe un id, actualízalo (no crees uno nuevo):
