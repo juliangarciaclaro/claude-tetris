@@ -42,13 +42,124 @@ const restartBtn = document.getElementById('restart-btn');
 const themeSwitch = document.getElementById('theme-switch');
 const themeLabel = document.getElementById('theme-label');
 
+const startScreen = document.getElementById('start-screen');
+const gameContainer = document.querySelector('.game-container');
+const playBtn = document.getElementById('play-btn');
+const resetRecordsBtn = document.getElementById('reset-records-btn');
+const startRecordsBody = document.getElementById('start-records-body');
+const globalBestComboEl = document.getElementById('global-best-combo');
+const globalMaxLinesEl = document.getElementById('global-max-lines');
+const newRecordForm = document.getElementById('new-record-form');
+const playerNameInput = document.getElementById('player-name');
+const saveRecordBtn = document.getElementById('save-record-btn');
+const overlayRecordsBody = document.getElementById('overlay-records-body');
+const overlayRecordsTable = document.getElementById('overlay-records-table');
+
+const RECORDS_KEY = 'tetris.records';
+const MAX_RECORDS = 5;
+
 const GRID_COLORS = { dark: '#22222e', light: '#d8d8e4' };
 
 let board, current, next, score, lines, level, paused, gameOver, lastTime, dropAccum, dropInterval, animId;
+let combo, maxCombo;
+// Antes de pulsar "JUGAR" no hay partida activa: gameOver=true hace que el
+// listener de teclado global (que no tocamos) ignore la entrada sin errores.
+gameOver = true;
+paused = false;
 
 function applyTheme(isLight) {
   document.body.classList.toggle('light', isLight);
   themeLabel.textContent = isLight ? 'LIGHT' : 'DARK';
+}
+
+function loadRecords() {
+  try {
+    const raw = localStorage.getItem(RECORDS_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter(r => r && typeof r === 'object');
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveRecords(records) {
+  try {
+    localStorage.setItem(RECORDS_KEY, JSON.stringify(records));
+  } catch (e) {
+    // localStorage puede lanzar en modo privado; ignoramos el error
+  }
+}
+
+function sortAndTrimRecords(records) {
+  return records
+    .slice()
+    .sort((a, b) => (b.score || 0) - (a.score || 0))
+    .slice(0, MAX_RECORDS);
+}
+
+function qualifiesForRecords(candidateScore) {
+  const records = loadRecords();
+  if (records.length < MAX_RECORDS) return true;
+  const lowest = records.reduce((min, r) => Math.min(min, r.score || 0), Infinity);
+  return candidateScore > lowest;
+}
+
+function addRecord(entry) {
+  const records = loadRecords();
+  records.push(entry);
+  const trimmed = sortAndTrimRecords(records);
+  saveRecords(trimmed);
+  return trimmed;
+}
+
+function renderRecordsTable(tbodyEl, records, highlightEntry) {
+  tbodyEl.innerHTML = '';
+  if (!records.length) {
+    const row = document.createElement('tr');
+    const cell = document.createElement('td');
+    cell.colSpan = 5;
+    cell.textContent = 'Sin records todavía';
+    cell.className = 'records-empty';
+    row.appendChild(cell);
+    tbodyEl.appendChild(row);
+    return;
+  }
+  records.forEach((rec, idx) => {
+    const row = document.createElement('tr');
+    const isNew = highlightEntry &&
+      rec.name === highlightEntry.name &&
+      rec.score === highlightEntry.score &&
+      rec.date === highlightEntry.date;
+    if (isNew) row.classList.add('record-new');
+    const cells = [
+      idx + 1,
+      rec.name || '---',
+      (rec.score || 0).toLocaleString(),
+      rec.lines || 0,
+      rec.combo || 0,
+    ];
+    cells.forEach(val => {
+      const td = document.createElement('td');
+      td.textContent = val;
+      row.appendChild(td);
+    });
+    tbodyEl.appendChild(row);
+  });
+}
+
+function renderGlobalStats(records) {
+  const bestCombo = records.reduce((max, r) => Math.max(max, r.combo || 0), 0);
+  const maxLines = records.reduce((max, r) => Math.max(max, r.lines || 0), 0);
+  globalBestComboEl.textContent = bestCombo;
+  globalMaxLinesEl.textContent = maxLines;
+}
+
+function renderStartScreen(highlightEntry) {
+  const records = loadRecords();
+  renderRecordsTable(startRecordsBody, records, highlightEntry || null);
+  renderGlobalStats(records);
 }
 
 function createBoard() {
@@ -117,7 +228,11 @@ function clearLines() {
     score += (LINE_SCORES[cleared] || 0) * level;
     level = Math.floor(lines / 10) + 1;
     dropInterval = Math.max(100, 1000 - (level - 1) * 90);
+    combo++;
+    if (combo > maxCombo) maxCombo = combo;
     updateHUD();
+  } else {
+    combo = 0;
   }
 }
 
@@ -235,6 +350,33 @@ function endGame() {
   overlayTitle.textContent = 'GAME OVER';
   overlayScore.textContent = `Puntuación: ${score.toLocaleString()}`;
   overlay.classList.remove('hidden');
+
+  overlayRecordsTable.classList.remove('hidden');
+  renderRecordsTable(overlayRecordsBody, loadRecords(), null);
+  if (qualifiesForRecords(score)) {
+    newRecordForm.classList.remove('hidden');
+    playerNameInput.value = '';
+    playerNameInput.focus();
+  } else {
+    newRecordForm.classList.add('hidden');
+  }
+}
+
+function saveCurrentRecord() {
+  const name = playerNameInput.value.trim() || 'Jugador';
+  const entry = {
+    name,
+    score,
+    lines,
+    combo: maxCombo,
+    date: new Date().toISOString(),
+  };
+  addRecord(entry);
+  newRecordForm.classList.add('hidden');
+  const records = loadRecords();
+  renderRecordsTable(overlayRecordsBody, records, entry);
+  renderRecordsTable(startRecordsBody, records, entry);
+  renderGlobalStats(records);
 }
 
 function togglePause() {
@@ -278,6 +420,8 @@ function init() {
   level = 1;
   paused = false;
   gameOver = false;
+  combo = 0;
+  maxCombo = 0;
   dropInterval = 1000;
   dropAccum = 0;
   lastTime = performance.now();
@@ -285,6 +429,8 @@ function init() {
   spawn();
   updateHUD();
   overlay.classList.add('hidden');
+  newRecordForm.classList.add('hidden');
+  overlayRecordsTable.classList.add('hidden');
   cancelAnimationFrame(animId);
   animId = requestAnimationFrame(loop);
 }
@@ -317,4 +463,21 @@ document.addEventListener('keydown', e => {
 restartBtn.addEventListener('click', init);
 themeSwitch.addEventListener('change', () => applyTheme(themeSwitch.checked));
 
-init();
+saveRecordBtn.addEventListener('click', saveCurrentRecord);
+playerNameInput.addEventListener('keydown', e => {
+  if (e.code === 'Enter') saveCurrentRecord();
+});
+
+playBtn.addEventListener('click', () => {
+  startScreen.classList.add('hidden');
+  gameContainer.classList.remove('hidden');
+  init();
+});
+
+resetRecordsBtn.addEventListener('click', () => {
+  if (!confirm('¿Seguro que quieres borrar todos los records?')) return;
+  saveRecords([]);
+  renderStartScreen(null);
+});
+
+renderStartScreen(null);

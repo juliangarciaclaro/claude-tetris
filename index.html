@@ -16,7 +16,39 @@
       <span class="label" id="theme-label">DARK</span>
     </div>
     <h1 class="game-title">TETRIS</h1>
-    <div class="game-container">
+
+    <div id="start-screen">
+      <div class="start-stats">
+        <div class="start-stat">
+          <span class="label">MEJOR COMBO</span>
+          <span class="value" id="global-best-combo">0</span>
+        </div>
+        <div class="start-stat">
+          <span class="label">LÍNEAS MÁXIMAS</span>
+          <span class="value" id="global-max-lines">0</span>
+        </div>
+      </div>
+
+      <table class="records-table" id="start-records-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nombre</th>
+            <th>Puntuación</th>
+            <th>Líneas</th>
+            <th>Combo</th>
+          </tr>
+        </thead>
+        <tbody id="start-records-body"></tbody>
+      </table>
+
+      <div class="start-actions">
+        <button id="play-btn">JUGAR</button>
+        <button id="reset-records-btn">Resetear records</button>
+      </div>
+    </div>
+
+    <div class="game-container hidden">
       <canvas id="board" width="300" height="600"></canvas>
 
       <aside class="panel">
@@ -55,6 +87,23 @@
       <div class="overlay-box">
         <p id="overlay-title">GAME OVER</p>
         <p id="overlay-score"></p>
+        <div id="new-record-form" class="hidden">
+          <p class="new-record-msg">¡Nuevo record! Escribe tu nombre:</p>
+          <input id="player-name" type="text" maxlength="12" placeholder="Nombre" />
+          <button id="save-record-btn">Guardar</button>
+        </div>
+        <table class="records-table hidden" id="overlay-records-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nombre</th>
+              <th>Puntuación</th>
+              <th>Líneas</th>
+              <th>Combo</th>
+            </tr>
+          </thead>
+          <tbody id="overlay-records-body"></tbody>
+        </table>
         <button id="restart-btn">Reiniciar</button>
       </div>
     </div>
