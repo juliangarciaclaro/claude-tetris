@@ -20,6 +20,7 @@
   --grid-color: #22222e;
   --btn-text: #0f0f17;
   --btn-hover: #9bbdff;
+  --pause-title: #7aa2f7;
 }
 
 body.light {
@@ -38,6 +39,7 @@ body.light {
   --grid-color: #d8d8e4;
   --btn-text: #ffffff;
   --btn-hover: #5577dd;
+  --pause-title: #3355cc;
 }
 
 body {
@@ -256,4 +258,88 @@ kbd {
 
 #restart-btn:hover {
   background: var(--btn-hover);
+}
+
+/* ---- Menú de pausa ---- */
+.pause-box {
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px 32px;
+  min-width: 220px;
+}
+
+#pause-title {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 4px;
+  color: var(--pause-title);
+}
+
+.pause-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.pause-actions button {
+  background: var(--accent);
+  color: var(--btn-text);
+  border: none;
+  border-radius: 6px;
+  padding: 10px 28px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: background 0.15s;
+}
+
+.pause-actions button:hover {
+  background: var(--btn-hover);
+}
+
+.pause-controls-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-self: stretch;
+}
+
+.pause-controls-list li {
+  font-size: 12px;
+  color: var(--control-text);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  justify-content: center;
+}
+
+.pause-controls-list.hidden {
+  display: none;
+}
+
+.pause-level-select {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+
+.pause-level-select label {
+  font-size: 12px;
+  color: var(--label);
+  letter-spacing: 1px;
+}
+
+.pause-level-select select {
+  background: var(--kbd-bg);
+  color: var(--text);
+  border: 1px solid var(--kbd-border);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 13px;
+  font-family: inherit;
 }
