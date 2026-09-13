@@ -20,6 +20,7 @@
   --grid-color: #22222e;
   --btn-text: #0f0f17;
   --btn-hover: #9bbdff;
+  --board-bg: var(--panel-bg);
 }
 
 body.light {
@@ -38,6 +39,7 @@ body.light {
   --grid-color: #d8d8e4;
   --btn-text: #ffffff;
   --btn-hover: #5577dd;
+  --board-bg: var(--panel-bg);
 }
 
 body {
@@ -135,7 +137,7 @@ body {
 #board {
   display: block;
   border: 1px solid var(--border);
-  background: var(--panel-bg);
+  background: var(--board-bg);
   border-radius: 4px;
   box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
 }
@@ -173,7 +175,7 @@ body {
 #next-canvas {
   display: block;
   border: 1px solid var(--border);
-  background: var(--panel-bg);
+  background: var(--board-bg);
   border-radius: 4px;
 }
 
@@ -256,4 +258,28 @@ kbd {
 
 #restart-btn:hover {
   background: var(--btn-hover);
+}
+
+/* ---- Skins ---- */
+#skin-select {
+  background: var(--kbd-bg);
+  color: var(--text);
+  border: 1px solid var(--kbd-border);
+  border-radius: 4px;
+  padding: 4px 6px;
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+body.skin-neon {
+  --board-bg: #000000;
+}
+
+body.skin-pastel {
+  --board-bg: #fdf6f0;
+}
+
+body.light.skin-pastel {
+  --board-bg: #fffaf5;
 }
