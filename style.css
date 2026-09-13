@@ -20,6 +20,8 @@
   --grid-color: #22222e;
   --btn-text: #0f0f17;
   --btn-hover: #9bbdff;
+  --record-new-bg: rgba(122, 162, 247, 0.18);
+  --record-new-border: #7aa2f7;
 }
 
 body.light {
@@ -38,6 +40,8 @@ body.light {
   --grid-color: #d8d8e4;
   --btn-text: #ffffff;
   --btn-hover: #5577dd;
+  --record-new-bg: rgba(51, 85, 204, 0.12);
+  --record-new-border: #3355cc;
 }
 
 body {
@@ -255,5 +259,163 @@ kbd {
 }
 
 #restart-btn:hover {
+  background: var(--btn-hover);
+}
+
+.hidden {
+  display: none;
+}
+
+/* ---- Pantalla de inicio ---- */
+#start-screen.hidden {
+  display: none;
+}
+
+#start-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  width: 340px;
+  padding: 20px;
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+}
+
+.start-stats {
+  display: flex;
+  gap: 32px;
+}
+
+.start-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.start-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  align-items: center;
+}
+
+#play-btn {
+  background: var(--accent);
+  color: var(--btn-text);
+  border: none;
+  border-radius: 6px;
+  padding: 12px 40px;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+#play-btn:hover {
+  background: var(--btn-hover);
+}
+
+#reset-records-btn {
+  background: transparent;
+  color: var(--control-text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+#reset-records-btn:hover {
+  color: var(--overlay-title);
+  border-color: var(--overlay-title);
+}
+
+/* ---- Tabla de records ---- */
+.records-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.records-table th,
+.records-table td {
+  padding: 6px 8px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+
+.records-table th {
+  color: var(--label);
+  font-size: 10px;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+.records-table td {
+  color: var(--text);
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.records-table td.records-empty {
+  color: var(--control-text);
+  font-family: inherit;
+  padding: 12px;
+}
+
+.records-table tr.record-new {
+  background: var(--record-new-bg);
+  outline: 1px solid var(--record-new-border);
+}
+
+#overlay-records-table {
+  max-width: 320px;
+}
+
+#new-record-form.hidden {
+  display: none;
+}
+
+#new-record-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.new-record-msg {
+  font-size: 12px;
+  color: var(--accent);
+}
+
+#player-name {
+  background: var(--kbd-bg);
+  border: 1px solid var(--kbd-border);
+  border-radius: 4px;
+  color: var(--text);
+  padding: 6px 10px;
+  font-size: 13px;
+  text-align: center;
+}
+
+#save-record-btn {
+  background: var(--accent);
+  color: var(--btn-text);
+  border: none;
+  border-radius: 6px;
+  padding: 6px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+#save-record-btn:hover {
   background: var(--btn-hover);
 }
