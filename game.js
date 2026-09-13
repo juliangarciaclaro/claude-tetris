@@ -148,6 +148,7 @@ function lockPiece() {
   merge();
   clearLines();
   spawn();
+  if (gameOver) return;
 }
 
 function spawn() {
@@ -230,6 +231,7 @@ function drawNext() {
 function endGame() {
   gameOver = true;
   cancelAnimationFrame(animId);
+  animId = null;
   overlayTitle.textContent = 'GAME OVER';
   overlayScore.textContent = `Puntuación: ${score.toLocaleString()}`;
   overlay.classList.remove('hidden');
@@ -262,6 +264,10 @@ function loop(ts) {
     }
   }
   draw();
+  if (gameOver || paused) {
+    animId = null;
+    return;
+  }
   animId = requestAnimationFrame(loop);
 }
 
