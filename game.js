@@ -39,8 +39,17 @@ const overlay = document.getElementById('overlay');
 const overlayTitle = document.getElementById('overlay-title');
 const overlayScore = document.getElementById('overlay-score');
 const restartBtn = document.getElementById('restart-btn');
+const themeSwitch = document.getElementById('theme-switch');
+const themeLabel = document.getElementById('theme-label');
+
+const GRID_COLORS = { dark: '#22222e', light: '#d8d8e4' };
 
 let board, current, next, score, lines, level, paused, gameOver, lastTime, dropAccum, dropInterval, animId;
+
+function applyTheme(isLight) {
+  document.body.classList.toggle('light', isLight);
+  themeLabel.textContent = isLight ? 'LIGHT' : 'DARK';
+}
 
 function createBoard() {
   return Array.from({ length: ROWS }, () => new Array(COLS).fill(0));
@@ -169,7 +178,7 @@ function drawBlock(context, x, y, colorIndex, size, alpha) {
 }
 
 function drawGrid() {
-  ctx.strokeStyle = '#22222e';
+  ctx.strokeStyle = themeSwitch.checked ? GRID_COLORS.light : GRID_COLORS.dark;
   ctx.lineWidth = 0.5;
   for (let c = 1; c < COLS; c++) {
     ctx.beginPath();
@@ -300,5 +309,6 @@ document.addEventListener('keydown', e => {
 });
 
 restartBtn.addEventListener('click', init);
+themeSwitch.addEventListener('change', () => applyTheme(themeSwitch.checked));
 
 init();
